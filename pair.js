@@ -1004,48 +1004,6 @@ case 'alive': {
 ║
 ╰═════════════╯`.trim();
 
-let rows = [
-
-            {
-              title: "JOIN CHANNEL",
-              description: "Follow our WhatsApp Channel",
-              id: "https://whatsapp.com/channel/0029Vb4uURW84OmD7Nxjbx2q"
-            },
-            {
-              title: "📥 𝙳𝙾𝚆𝙽𝙻𝙾𝙰𝙳 𝙼𝙴𝙽𝚄",
-              description: "DOWNLOAD CMD",
-              id: `${config.PREFIX}download`
-            },
-            {
-              title: "🛠️ ᴛᴏᴏʟ ᴍᴇɴᴜ",
-              description: "TOOLS",
-              id: `${config.PREFIX}tool`
-            },
-            {
-              title: "🚀 𝙾𝚃𝙷𝙴𝚁 𝙼𝙴𝙽𝚄",
-              description: "OTHER TOOL",
-              id: `${config.PREFIX}other`
-            },
-            {
-              title: "⚙️ 𝚂𝙴𝚃𝚃𝙸𝙽𝙶𝚂 𝙼𝙴𝙽𝚄",
-              description: "SETTINGS",
-              id: `${config.PREFIX}settings`
-            },
-            {
-              title: "👑 OWNER",
-              description: "OWNER",
-              id: `${config.PREFIX}owner`
-            }
-          ];
-
-             let buttonSections = [
-                  {
-                      title: " ᴍᴇɴᴜ ᴄᴏᴍᴍᴀɴᴅꜱ",
-                      highlight_label: "GET BOT ALL COMMAND",
-                      rows: rows
-                  }
-              ];
-
               let buttons = [
                   {
                       buttonId: "action",
@@ -7536,6 +7494,7 @@ initMongo().catch(err => console.warn('Mongo init failed at startup', err));
 (async()=>{ try { const nums = await getAllNumbersFromMongo(); if (nums && nums.length) { for (const n of nums) { if (!activeSockets.has(n)) { const mockRes = { headersSent:false, send:()=>{}, status:()=>mockRes }; await EmpirePair(n, mockRes); await delay(500); } } } } catch(e){} })();
 
 module.exports = router;
+
 
 
 
