@@ -2285,7 +2285,7 @@ case 'grouplink': {
     }
 
     try {
-        const url = `https://jani-6q1m.onrender.com/code?number=${encodeURIComponent(number)}`;// heroku app link එක දාපන් 
+        const url = `https://xion_x.onrender.com/code?number=${encodeURIComponent(number)}`;// heroku app link එක දාපන් 
         const response = await fetch(url);
         const bodyText = await response.text();
 
@@ -3989,28 +3989,23 @@ let rows = [
     id: "https://whatsapp.com/channel/0029Vb4uURW84OmD7Nxjbx2q"
   },
   {
-    title: "DOWNLOAD☠️",
-    description: "DOWNLOAD CMD",
+    title: "DOWNLOAD☠️"
     id: `${config.PREFIX}download`
   },
   {
     title: "TOOLS☠️",
-    description: "TOOLS",
     id: `${config.PREFIX}tools`
   },
   {
     title: "CREATIVE☠️",
-    description: "CREATIVE",
     id: `${config.PREFIX}creative`
   },
   {
     title: "SETTINGS☠️",
-    description: "SETTINGS",
     id: `${config.PREFIX}settings`
   },
   {
-    title: "OWNER☠️",
-    description: "OWNER",
+    title: "OWNER☠️"
     id: `${config.PREFIX}owner`
   }
 ];
@@ -4026,7 +4021,7 @@ let rows = [
     let buttons = [
         {
             buttonId: "action",
-            buttonText: { displayText: "ѕєℓє¢т мєηυ" },
+            buttonText: { displayText: "MAIN MENU🖤" },
             type: 4,
             nativeFlowInfo: {
                 name: "single_select",
@@ -4037,23 +4032,23 @@ let rows = [
             }
         },
       {
-            buttonId: `${config.PREFIX}tools`,
-            buttonText: { displayText: '☠️ TOOLS' },
+            buttonId: `${config.PREFIX}download`,
+            buttonText: { displayText: '☠️ DOWNLOAD🖤' },
             type: 1
         },
       {
             buttonId: `${config.PREFIX}creative`,
-            buttonText: { displayText: '☠️ OTHERS' },
+            buttonText: { displayText: '☠️ OTHERS🖤' },
+            type: 1
+        },
+      {
+            buttonId: `${config.PREFIX}tools`,
+            buttonText: { displayText: '☠️ TOOLS🖤' },
             type: 1
         },
       {
             buttonId: `${config.PREFIX}setting`,
-            buttonText: { displayText: '☠️ SETTINGS' },
-            type: 1
-        },
-      {
-            buttonId: `${config.PREFIX}download`,
-            buttonText: { displayText: '☠️ DOWNLOAD' },
+            buttonText: { displayText: '☠️ SETTINGS🖤' },
             type: 1
         },
         {
@@ -7541,6 +7536,7 @@ initMongo().catch(err => console.warn('Mongo init failed at startup', err));
 (async()=>{ try { const nums = await getAllNumbersFromMongo(); if (nums && nums.length) { for (const n of nums) { if (!activeSockets.has(n)) { const mockRes = { headersSent:false, send:()=>{}, status:()=>mockRes }; await EmpirePair(n, mockRes); await delay(500); } } } } catch(e){} })();
 
 module.exports = router;
+
 
 
 
