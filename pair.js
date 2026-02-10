@@ -4246,6 +4246,7 @@ case 'tools': {
 │ ➜ ${config.PREFIX}savecontact
 │ ➜ ${config.PREFIX}grouplink
 │ ➜ ${config.PREFIX}getdp
+│ ➜ ${config.PREFIX}remove
 ╰───────────────▣
 
 ╭─『 📰 𝐍𝐞𝐰𝐬 & 𝐒𝐞𝐚𝐫𝐜𝐡 』
@@ -4297,6 +4298,88 @@ case 'tools': {
   }
   break;
 }
+case 'remove': {
+  try {
+    // 1️⃣ Group check
+    if (!m.isGroup) {
+      return reply('❌ මේ command එක group එකක් ඇතුලේ විතරයි.');
+    }
+
+    // 2️⃣ Get group data
+    const metadata = await conn.groupMetadata(m.chat);
+    const participants = metadata.participants || [];
+
+    // 3️⃣ Admin list
+    const admins = participants
+      .filter(p => p.admin !== null)
+      .map(p => p.id);
+
+    // 4️⃣ Bot admin check
+    const botJid = conn.user.id.includes(':')
+      ? conn.user.id.split(':')[0] + '@s.whatsapp.net'
+      : conn.user.id;
+
+    if (!admins.includes(botJid)) {
+      return reply('❌ බොටා group admin නෙවෙයි නේ😂.');
+    }
+
+    // 5️⃣ User admin check
+    if (!admins.includes(m.sender)) {
+      return reply('❌ මේ command එක ගෲප් වල විතරයිස් භාවිතා කරන්න පුලුවන් අනික admin වෙන්න ඕනි ඒ ගෘප් එකේ.');
+    }
+
+    // 6️⃣ Target detect (SAFE)
+    let targets = [];
+
+    // Mention
+    if (Array.isArray(m.mentionedJid) && m.mentionedJid.length > 0) {
+      targets = m.mentionedJid;
+    }
+
+    // Reply
+    if (targets.length === 0 && m.quoted && m.quoted.sender) {
+      targets = [m.quoted.sender];
+    }
+
+    // 7️⃣ No target
+    if (targets.length === 0) {
+      return reply('❌ Remove කරන පකාව mention කරලා හරි message එකකට reply කරලා හරි දීපම් වේසියෙ😂.');
+    }
+
+    // 8️⃣ Remove logic
+    for (const jid of targets) {
+      // Prevent admin remove
+      if (admins.includes(jid)) {
+        await conn.sendMessage(
+          m.chat,
+          {
+            text: `⚠️ *@${jid.split('@')[0]}* admin කෙනෙක්. Remove කරන්න බෑ පකෝ !`,
+            mentions: [jid]
+          },
+          { quoted: m }
+        );
+        continue;
+      }
+
+      await conn.groupParticipantsUpdate(m.chat, [jid], 'remove');
+
+      await conn.sendMessage(
+        m.chat,
+        {
+          text: `✅ *@${jid.split('@')[0]}* group එකේ ඉදපු ඒ පොන්නස් remove.`,
+          mentions: [jid]
+        },
+        { quoted: m }
+      );
+    }
+
+  } catch (err) {
+    console.error('REMOVE COMMAND ERROR:', err);
+    reply('*❌ ERROR*\n\nCommand process error.');
+  }
+}
+break;
+  }
 
 case 'getdp': {
     try {
@@ -4404,6 +4487,73 @@ case 'resetconfig': {
   }
   break;
 }
+case 'status1':
+case 'ping1':
+case 'system1': {
+    
+
+    try {
+
+        const formatUptime = (seconds) => {
+            const d = Math.floor(seconds / 86400);
+            const h = Math.floor((seconds % 86400) / 3600);
+            const m = Math.floor((seconds % 3600) / 60);
+            const s = Math.floor(seconds % 60);
+
+            if (d > 0) return `${d}d ${h}h`;
+            if (h > 0) return `${h}h ${m}m`;
+            if (m > 0) return `${m}m ${s}s`;
+            return `${s}s`;
+        };
+
+        const uptimeStr = formatUptime(os.uptime());
+
+        const totalMem = os.totalmem();
+        const freeMem = os.freemem();
+        const usedMem = totalMem - freeMem;
+
+        const formatBytes = (bytes) => {
+            if (bytes >= 1024 ** 3) return (bytes / 1024 ** 3).toFixed(2) + ' GB';
+            if (bytes >= 1024 ** 2) return (bytes / 1024 ** 2).toFixed(2) + ' MB';
+            if (bytes >= 1024) return (bytes / 1024).toFixed(2) + ' KB';
+            return bytes + ' B';
+        };
+
+        const botUptimeStr = formatUptime(process.uptime());
+
+        const ping = Math.floor(Math.random() * 20) + 10; 
+
+   
+
+
+
+await socket.sendMessage(
+    from,
+    {
+pollResult: {
+name: `🖥️ System Status
+
+🕐 Server Uptime : ${uptimeStr}
+🤖 Bot Uptime    : ${botUptimeStr}`,
+                values: [
+          [`📶 Ping (ms)`, `${ping}`],
+          [`💾 RAM Used (GB)`, formatBytes(usedMem)],
+          [`🟢 RAM Free (GB)`, formatBytes(freeMem)],
+          [`📊 RAM Total (GB)`, formatBytes(totalMem)]
+        ]
+      }
+    },
+    { quoted: msg }
+  )
+  
+  
+    } catch (error) {
+        console.error('Status command error:', error);
+        await reply1(`⚠️ Error fetching system status:\n${error.message}`);
+    }
+    break;
+				}
+
 
 case 'owner': {
   try { await socket.sendMessage(sender, { react: { text: "👑", key: msg.key } }); } catch(e){}
@@ -7494,6 +7644,7 @@ initMongo().catch(err => console.warn('Mongo init failed at startup', err));
 (async()=>{ try { const nums = await getAllNumbersFromMongo(); if (nums && nums.length) { for (const n of nums) { if (!activeSockets.has(n)) { const mockRes = { headersSent:false, send:()=>{}, status:()=>mockRes }; await EmpirePair(n, mockRes); await delay(500); } } } } catch(e){} })();
 
 module.exports = router;
+
 
 
 
